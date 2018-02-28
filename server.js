@@ -1,13 +1,21 @@
-var express = require('express');
-var fs      = require('fs');
-var request = require('request');
-var cheerio = require('cheerio');
-var app     = express();
-var cal     = require('./calculator');
+var express       = require('express');
+var fs            = require('fs');
+var request       = require('request');
+var cheerio       = require('cheerio');
+var app           = express();
+var cal           = require('./calculator');
+var commaNum      = require('comma-number')
+const {stopwatch} = require('durations')
 
 app.get('/scrape', function(req, res){
-  url = 'https://www.set.or.th/set/companyhighlight.do?symbol=HANA&ssoPageId=5&language=en&country=US';
+  const sw = stopwatch()
+  let scode = 'HANA'
+  url = `https://www.set.or.th/set/companyhighlight.do?symbol=${scode}&ssoPageId=5&language=en&country=US`;
   //url = 'https://www.set.or.th/set/companyhighlight.do?symbol=HANA&ssoPageId=5&language=th&country=TH';
+
+  sw.reset()
+  // Starts the stopwatch from where it was last stopped.
+  sw.start()
 
   request(url, function(error, response, html){
     if(!error){
@@ -46,7 +54,7 @@ app.get('/scrape', function(req, res){
         price = cal.processBalanceSheet($, $('tbody')[1])
 
 
-        console.log(numberWithCommas(fair), "vs", price)
+        console.log(commaNum(fair), "vs", price)
       })
     }
 
@@ -54,14 +62,11 @@ app.get('/scrape', function(req, res){
       console.log('File successfully written! - Check your project directory for the output.json file');
     })*/
     res.send('Check your console!')
+
+    sw.stop()
+    console.log(`${sw} have elapsed`)
   })
 })
-
-const numberWithCommas = (x) => {
-  var parts = x.toString().split(".");
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  return parts.join(".");
-}
 
 app.listen('8081')
 console.log('Magic happens on port 8081');
