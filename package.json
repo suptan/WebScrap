@@ -5,6 +5,8 @@
   "main": "server.js",
   "author": "Scotch",
   "dependencies": {
+    "async": "^2.6.0",
+    "asyncjs": "0.0.12",
     "cheerio": "latest",
     "comma-number": "^2.0.0",
     "durations": "^3.4.1",
